@@ -36,5 +36,10 @@ setup(
     packages=list(map(lambda x: x[0], packages)),
     extras_require=extras,
     tests_require=tests_require,
-    test_suite='tests'
+    test_suite='tests',
+    url='https://github.com/TwoPiCode/twopi-flask-utils',
+    author='Nick Whyte',
+    author_email='nick@twopicode.com',
+    description=('A set of utilities to make working with flask web '
+                 'applications easier.')
 )
