@@ -1,0 +1,7 @@
+[flake8]
+ignore = E302, E121, W291, W391, W293, E261, W292, E401, E303, E701
+exclude =
+   .git,
+   venv,
+
+max-line-length = 100
