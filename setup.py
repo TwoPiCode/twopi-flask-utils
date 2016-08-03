@@ -1,6 +1,5 @@
 from setuptools import setup
 import os
-import subprocess
 
 PACKAGE_PATH = './twopi_flask_utils'
 
@@ -23,15 +22,32 @@ tests_require = []
 for x in extras.values():
     tests_require.extend(x)
 
+
+
 def get_version():
-    v = subprocess.check_output(['git', 'describe', '--dirty', '--always'])
+    version_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'VERSION')
+    v = open(version_path).read()
     if type(v) == str:
-        return v
-    return v.decode('UTF-8')
+        return v.strip()
+    return v.decode('UTF-8').strip()
+
+
+readme_path = os.path.join(os.path.dirname(
+  os.path.abspath(__file__)),
+  'README.rst',
+)
+long_description = open(readme_path).read()
+
+try:
+    version = get_version()
+except Exception as e:
+    version = '0.0.0-dev'
 
 setup(
     name='twopi-flask-utils',
-    version=get_version().strip(),
+    version=version,
     package_dir=dict(packages),
     packages=list(map(lambda x: x[0], packages)),
     extras_require=extras,
@@ -41,5 +57,6 @@ setup(
     author='Nick Whyte',
     author_email='nick@twopicode.com',
     description=('A set of utilities to make working with flask web '
-                 'applications easier.')
+                 'applications easier.'),
+    long_description=long_description
 )

@@ -12,6 +12,9 @@ install:
 script:
   - make test
 
+before_deploy:
+  - git describe --dirty --always > VERSION
+
 deploy:
   provider: pypi
   user: twopi-deploy
