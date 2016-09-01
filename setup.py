@@ -14,14 +14,14 @@ extras = {
     'ldap': [],
     'restful': ['flask-restful'],
     'celery': ['celery'],
-    'sentry': ['raven[flask]']
+    'sentry': ['raven[flask]'],
+    'pagination': ['webargs', 'marshmallow']
 }
 
 
 tests_require = []
 for x in extras.values():
     tests_require.extend(x)
-
 
 
 def get_version():
