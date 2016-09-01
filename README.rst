@@ -35,6 +35,7 @@ Available Packages
 - `celery <twopi_flask_utils/celery>`_ : Helpers to create celery apps that share flask application configuration
 - `config <twopi_flask_utils/config>`_
 - `deployment_release <twopi_flask_utils/deployment_release>`_
+- `pagination <twopi_flask_utils/pagination>`_
 - `restful <twopi_flask_utils/restful>`_: Helpers for use with flask-restful
 - `sentry <twopi_flask_utils/sentry>`_: Helpers for instantiating and using sentry with both Flask applications and Celery workers.
 - `testing <twopi_flask_utils/testing>`_: Helpers to assist with testing Flask applications.
