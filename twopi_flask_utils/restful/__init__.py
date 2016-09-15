@@ -3,7 +3,7 @@ from flask import jsonify
 
 def format_error(*errors):
     return {
-        '_error': errors
+        '_errors': errors
     }
 
 def output_json(data, code, headers=None):
@@ -29,5 +29,12 @@ def handle_bad_request(err):
         messages = data['exc'].messages
     else:
         messages = ['Invalid request']
+
+    # Handle flat responses and give it a generic key.
+    if type(messages) == list:
+        messages = {
+            '_errors': messages
+        }
+
     return jsonify(messages), 422
 
