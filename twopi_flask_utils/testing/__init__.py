@@ -15,8 +15,11 @@ class AppReqTestHelper(object):
             kwargs['data'] = json.dumps(kwargs.get('json'))
             del kwargs['json']
 
+        # Take provided headers or fall back.
+        headers = kwargs.pop('headers', getattr(self, 'client_headers', {}))
+
         func = getattr(self.client, meth)
-        rv = func(*args, **kwargs)
+        rv = func(*args, headers=headers, **kwargs)
 
         def get_json():
             return json.loads(rv.data.decode('UTF-8'))
@@ -40,17 +43,39 @@ class AppReqTestHelper(object):
         return self._req('patch', *args, **kwargs)
 
 
+class PrivilegeTestHelper(AppReqTestHelper):
+    def do_test_privileges(self, endpoint, data, object_id, expected_codes):
+        for meth, expected_code in expected_codes:
+            assert meth in ['plural-get', 'get', 'delete', 'put', 'post']
+
+            kwargs = {}
+            endp = endpoint
+            _meth = meth
+            if meth in ['put', 'post']:
+                kwargs['json'] = data
+
+            if meth in ['put', 'delete', 'get']:
+                endp = endpoint + '/{}'.format(object_id)
+
+            if meth == 'plural-get':
+                _meth = 'get'
+
+            rv = self._req(_meth, endp, **kwargs)
+            self.assertEqual(rv.status_code, expected_code, 
+                             "Expected {} for method {} but got {}. {}".format(
+                                expected_code, meth, rv.status_code, rv.get_json()))
+
 
 class CRUDTestHelper(AppReqTestHelper):
     def do_crud_test(self, endpoint, data_1=None, data_2=None, key='id', 
                      check_keys=[], keys_from_prev=[], create=True, delete=True, 
-                     update=True, read=True):
+                     update=True, read=True, initial_count=0):
 
         if read:
-            # Plural read on empty set.
+            # Plural read on initial set.
             rv = self.get(endpoint)
             self.assertEqual(rv.status_code, 200)
-            self.assertEqual(len(rv.get_json()), 0)
+            self.assertEqual(len(rv.get_json()), initial_count)
 
         if create:
             # Create
@@ -64,11 +89,17 @@ class CRUDTestHelper(AppReqTestHelper):
             rv = self.get(endpoint)
             self.assertEqual(rv.status_code, 200)
             if create:
-                self.assertEqual(len(rv.get_json()), 1)
-                self.assertEqualDicts(check_keys, rv.get_json()[0], data_1)
+                self.assertEqual(len(rv.get_json()), initial_count + 1)
+                # Ensure that at least one of the items is equal to the one we made
+                for item in rv.get_json():
+                    if self.equalDicts(check_keys, item, data_1):
+                        break
+                else: # nobreak
+                    self.fail("Could not find the object that was created in the response.")
+
             else:
                 # No object should have been created
-                self.assertEqual(len(rv.get_json()), 0)
+                self.assertEqual(len(rv.get_json()), initial_count)
 
         if read and create:
             # Singular Read
@@ -105,7 +136,7 @@ class CRUDTestHelper(AppReqTestHelper):
             # Plural read on empty set
             rv = self.get(endpoint)
             self.assertEqual(rv.status_code, 200)
-            self.assertEqual(len(rv.get_json()), 0)
+            self.assertEqual(len(rv.get_json()), initial_count)
 
     def filteredDicts(self, keys, *dicts):
         ret = []
@@ -118,3 +149,8 @@ class CRUDTestHelper(AppReqTestHelper):
 
     def assertEqualDicts(self, keys, d1, d2):
         self.assertEqual(*self.filteredDicts(keys, d1, d2))
+
+    def equalDicts(self, keys, d1, d2):
+        d1, d2 = self.filteredDicts(keys, d1, d2)
+        return d1 == d2
+
