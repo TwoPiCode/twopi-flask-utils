@@ -1,4 +1,3 @@
-from flask_restful.representations.json import output_json as _output_json
 from flask import jsonify
 
 def format_error(*errors):
@@ -19,8 +18,13 @@ def output_json(data, code, headers=None):
         # handle flask-restful default
         data = format_error(data.get('message'))
 
-    return _output_json(data, code, headers)
+    resp = jsonify(data)
 
+    if code:
+        resp.status_code = code
+
+    resp.headers.extend(headers)
+    return resp
 
 def handle_bad_request(err):
     data = getattr(err, 'data')
