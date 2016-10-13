@@ -15,7 +15,8 @@ extras = {
     'restful': ['flask-restful'],
     'celery': ['celery'],
     'sentry': ['raven[flask]'],
-    'pagination': ['webargs', 'marshmallow']
+    'pagination': ['webargs', 'marshmallow'],
+    'webargs': ['webargs']
 }
 
 
