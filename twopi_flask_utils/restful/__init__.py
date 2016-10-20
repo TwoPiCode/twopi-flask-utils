@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, request
 
 def format_errors(*errors):
     return {
@@ -68,3 +68,27 @@ def output_json(data, code, headers=None):
 
     resp.headers.extend(headers)
     return resp
+
+
+
+class ExpectedJSONException(Exception):
+    """
+    Thrown when JSON was expected in a flask request but was not
+    provided
+    """
+    pass
+
+    @classmethod
+    def handle(cls, exc):
+        return jsonify(
+            format_error('Resource expected a JSON payload to be provided.')
+        ), 400
+
+
+def get_and_expect_json():
+    data = request.get_json()
+    if data is None:
+        raise ExpectedJSONException()
+    
+    return data
+
