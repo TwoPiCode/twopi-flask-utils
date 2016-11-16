@@ -16,7 +16,8 @@ extras = {
     'celery': ['celery'],
     'sentry': ['raven[flask]'],
     'pagination': ['webargs', 'marshmallow'],
-    'webargs': ['webargs']
+    'webargs': ['webargs'],
+    'token_auth': ['marshmallow']
 }
 
 
