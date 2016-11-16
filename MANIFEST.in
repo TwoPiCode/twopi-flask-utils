@@ -1,1 +1,4 @@
 include LICENSE README.rst VERSION setup.cfg
+
+global-exclude *.py[co]
+
