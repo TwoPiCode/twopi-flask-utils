@@ -32,4 +32,5 @@ def paginated(basequery, schema_type, offset=None, limit=None):
 
     return _Pagination().dump(data)
 
+
 __all__ = ['paginated']

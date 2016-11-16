@@ -1,24 +1,28 @@
 from setuptools import setup
 import os
 
-PACKAGE_PATH = './twopi_flask_utils'
-
-packages = []
-
-for item in os.listdir(PACKAGE_PATH):
-    path = os.path.join(PACKAGE_PATH, item)
-    if not item.startswith('_') and os.path.isdir(path):
-        packages.append(('twopi_flask_utils.' + item, path))
-
 extras = {
     'ldap': [],
     'restful': ['flask-restful'],
     'celery': ['celery'],
     'sentry': ['raven[flask]'],
     'pagination': ['webargs', 'marshmallow'],
-    'webargs': ['webargs']
+    'webargs': ['webargs'],
+    'token_auth': ['marshmallow']
 }
 
+packages = [
+    'twopi_flask_utils',
+    'twopi_flask_utils.celery',
+    'twopi_flask_utils.config',
+    'twopi_flask_utils.deployment_release',
+    'twopi_flask_utils.pagination',
+    'twopi_flask_utils.restful',
+    'twopi_flask_utils.sentry',
+    'twopi_flask_utils.testing',
+    'twopi_flask_utils.token_auth',
+    'twopi_flask_utils.webargs',
+]
 
 tests_require = []
 for x in extras.values():
@@ -46,11 +50,14 @@ try:
 except Exception as e:
     version = '0.0.0-dev'
 
+
 setup(
     name='twopi-flask-utils',
     version=version,
-    package_dir=dict(packages),
-    packages=list(map(lambda x: x[0], packages)),
+    packages=packages,
+    package_data={'': ['LICENSE', 'README.rst']},
+    zip_safe=False,
+    include_package_data=True,
     extras_require=extras,
     tests_require=tests_require,
     test_suite='tests',

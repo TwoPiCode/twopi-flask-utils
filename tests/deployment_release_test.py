@@ -17,5 +17,6 @@ class TestGetRelease(unittest.TestCase):
     def test_no_release_file(self):
         self.assertEqual(get_release(), '__UNKNOWN__')
 
+
 if __name__ == '__main__':
     unittest.main()

@@ -14,6 +14,7 @@ class BetterFlaskParser(FlaskParser):
         """
         raise error
 
+
 parser = BetterFlaskParser()
 use_args = parser.use_args
 use_kwargs = parser.use_kwargs
@@ -42,6 +43,7 @@ def handle_validation_error(exc):
 
     assert(type(exc) == ValidationError)
     return jsonify(exc.messages), exc.status_code
+
 
 __all__ = ['BetterFlaskParser', 'parser', 'use_args', 'use_kwargs',
            'handle_validation_error']
