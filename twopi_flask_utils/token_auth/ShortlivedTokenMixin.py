@@ -50,9 +50,15 @@ class ShortlivedTokenMixin(object):
 
     @classmethod
     def generate(Cls, refresh_token):
-        raise NotImplemented("You must implement generate. Simply invoke Cls() "
+        log.warning("{}.generate() is deprecated. Please use "
+                    "{}.from_refresh_token()".format(Cls.__name__, Cls.__name__))
+        return Cls.from_refresh_token(refresh_token)
+
+    @classmethod
+    def from_refresh_token(Cls, refresh_token):
+        raise NotImplemented("You must implement from_refresh_token. Invoke {}() "
                              "and instantiate it using information from the "
-                             "refresh token")
+                             "refresh token".format(Cls.__name__))
 
     @classmethod
     def load(Cls, token_string, secret=None, issuer=None, audience=None):
