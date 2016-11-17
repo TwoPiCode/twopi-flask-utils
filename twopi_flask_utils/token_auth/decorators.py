@@ -1,5 +1,6 @@
-from flask import g, request
+from flask import g, request, jsonify
 from functools import wraps
+from twopi_flask_utils.restful import format_error
 import re
 
 bearer_re = re.compile(r'Bearer (.+)')
@@ -43,7 +44,7 @@ def parse_auth_header(token_cls, auth_header=True, query_string=True, secret=Non
             if raw_token is not None:
                 token = token_cls.load(raw_token, secret)
                 if token is None:
-                    return "The provided token was invalid.", 401
+                    return jsonify(format_error("The provided token was invalid.")), 401
 
                 g.token = token
                 g.raw_token = raw_token
@@ -73,7 +74,8 @@ def auth_required():
         @wraps(f)
         def wrapped(*args, **kwargs):
             if g.token is None:
-                return "A valid token is required to access this resource", 401
+                return jsonify(
+                    format_error("A valid token is required to access this resource")), 401
 
             return f(*args, **kwargs)
         
