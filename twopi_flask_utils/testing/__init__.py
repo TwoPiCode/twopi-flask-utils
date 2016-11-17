@@ -2,10 +2,9 @@ import json
 
 class AppReqTestHelper(object):
     """
-    Adds convenience self.post, self.get, self.put, self.delete, self.patch
-    methods on the testcase object.
+    Adds convenience request methods on the testcase object.
 
-    Assumes a flask app client is defined on self.client
+    Assumes a flask app client is defined on ``self.client``
     """
     def _req(self, meth, *args, **kwargs):
         if kwargs.get('content_type') is None and meth != 'get':
@@ -28,23 +27,51 @@ class AppReqTestHelper(object):
         return rv
 
     def post(self, *args, **kwargs):
+        """Perform a post request to the application."""
         return self._req('post', *args, **kwargs)
 
     def get(self, *args, **kwargs):
+        """Perform a get request to the application."""
         return self._req('get', *args, **kwargs)
 
     def put(self, *args, **kwargs):
+        """Perform a put request to the application."""
         return self._req('put', *args, **kwargs)
 
     def delete(self, *args, **kwargs):
+        """Perform a delete request to the application."""
         return self._req('delete', *args, **kwargs)
 
     def patch(self, *args, **kwargs):
+        """Perform a patch request to the application."""
         return self._req('patch', *args, **kwargs)
 
 
 class PrivilegeTestHelper(AppReqTestHelper):
+    """
+    Adds a helper to test endpoint privileges in an application.
+    """
+
     def do_test_privileges(self, endpoint, data, object_id, expected_codes):
+        """
+        Test privileges on a specific endpoint.
+
+        :param endpoint: The endpoint to test. e.g. `/api/v1/classes`
+        :param data: The data to use when performing a `PUT`/`POST` (dict)
+        :param object_id: The id of the singular object to test permissions on `PUT`/`DELETE`/`GET`
+        :param expected_codes: The expected response codes when performing each
+                               endpoint request. E.g.
+                                .. code::
+
+                                    {
+                                        'plural-get': 200,
+                                        'get': 200,
+                                        'delete': 403,
+                                        'post': 200,
+                                        'put': 200,
+                                    }
+
+        """
         for meth, expected_code in expected_codes:
             assert meth in ['plural-get', 'get', 'delete', 'put', 'post']
 
@@ -67,9 +94,33 @@ class PrivilegeTestHelper(AppReqTestHelper):
 
 
 class CRUDTestHelper(AppReqTestHelper):
+    """
+    A helper to test generic CRUD operations on an endpoint.
+    """
     def do_crud_test(self, endpoint, data_1=None, data_2=None, key='id', 
                      check_keys=[], keys_from_prev=[], create=True, delete=True, 
                      update=True, read=True, initial_count=0):
+        """
+        Begins the CRUD test. 
+
+        :param endpoint: ``string``: The endpoint to test
+        :param data1: ``dict``: Data to create the initial entity with (POST)
+        :param data2: ``dict``: Data to update the entity with (PUT)
+        :param key: ``string``: The key field in the response returned when performing
+                            a create.
+        :param check_keys: ``list``: A list of keys to compare ``data_1`` and 
+                                 ``data_2`` to returned API responses. (To 
+                                 ensure expected response data)
+        :param keys_from_prev: ``list``: A list of keys to check that they persisted 
+                                     after a create/update.
+        :param create: ``bool``: Should create a new object and test it's existence
+        :param delete: ``bool``: Should delete the newly created object and test 
+                             that it has been deleted.
+        :param update: ``bool``: Should performs PUT (update)
+        :param read: ``bool``: Should perform a plural read
+        :param initial_count: ``int``: The initial number of entities in the endpoint's 
+                                   dataset
+        """
 
         if read:
             # Plural read on initial set.

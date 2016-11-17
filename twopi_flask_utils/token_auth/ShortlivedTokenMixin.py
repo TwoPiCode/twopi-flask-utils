@@ -24,7 +24,22 @@ class UnixTimestamp(fields.Field):
 
 
 class ShortlivedTokenMixin(object):
+    """
+    A base class for implementing a short-lived token using JWTs
+
+    :param expiry: ``datetime``: The expiry of this token
+    :param issuer: ``string``
+    :param subject: ``string``
+    :param audience: ``string``
+    :param not_before: ``datetime``: A datetime of when the token becomes 
+                                     valid for use
+    :param issued_at: ``datetime``: When the token was issued. This value is 
+                                    overwritten during ``dump()``
+    """
     class TokenSchema(Schema):
+        """
+        The schema to use to serialize/de-serialize JWT's with.
+        """
         SKIPPABLE = ['exp', 'iss', 'sub', 'aud', 'nbf', 'iat']
 
         exp = UnixTimestamp(attribute='expiry')
@@ -56,12 +71,38 @@ class ShortlivedTokenMixin(object):
 
     @classmethod
     def from_refresh_token(Cls, refresh_token):
+        """
+        Given a refresh token, return an instance of ShortLivedTokenMixin 
+        configured using information from ``refresh_token``.
+
+        :param refresh_token: A refresh token instance.
+        :returns: A new ShortLivedToken instance.
+
+        .. warning::
+            
+            You must implement this method
+
+
+
+        """
         raise NotImplemented("You must implement from_refresh_token. Invoke {}() "
                              "and instantiate it using information from the "
                              "refresh token".format(Cls.__name__))
 
     @classmethod
     def load(Cls, token_string, secret=None, issuer=None, audience=None):
+        """
+        Load from a JWT (``token_string``)
+
+        :param token_string: The raw string to load from
+        :param secret: The secret that the JWT was signed with to check validity. 
+                       If this is omitted, the secret will be sourced 
+                       from ``current_app.config['SECRET_KEY']``
+        :param issuer: The issuer the JWT decode should expect
+        :param audience: The audience the JWT decode should expect
+        :returns: A de-serialized ShortLivedToken instance.
+        """
+
         if secret is None:
             secret = current_app.config['SECRET_KEY']
 
@@ -83,6 +124,15 @@ class ShortlivedTokenMixin(object):
             return None
 
     def dump(self, secret=None):
+        """
+        Dump the token into a stringified JWT.
+
+        :param secret: The secret to sign the JWT with. If this is omitted, the 
+                       secret will be sourced from ``current_app.config['SECRET_KEY']``
+
+        :returns: The stringified JWT.
+        """
+
         self.issued_at = datetime.datetime.now(pytz.UTC)
         payload, err = self.TokenSchema().dump(self)
 

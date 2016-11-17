@@ -5,6 +5,20 @@ except ImportError:
 
 def build_url(url, scheme=None, username=None, password=None, hostname=None, 
               port=None, path=None):
+    """
+    Parse a URL and override specific segments of it.
+    
+    :param url: The url to parse/build upon
+    :param scheme: 
+    :param username: 
+    :param password: 
+    :param hostname: 
+    :param port:
+    :param path:
+    
+    :return: A URL with overridden components
+
+    """
     dsn = urlparse(url)
 
     if scheme is None: scheme = dsn.scheme

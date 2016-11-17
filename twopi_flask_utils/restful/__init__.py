@@ -11,38 +11,43 @@ def format_error(error):
 
 def output_json(data, code, headers=None):
     """
-    ```
-    api.representations['application/json'] = output_json
-    ```
+    
+    .. code-block:: python
+        
+        api.representations['application/json'] = output_json
     
     Generates better formatted responses for RESTFul APIs. 
 
     If the restful resource responds with a string, with a non 200 error,
     the response will look like
 
-    ```
-    {
-        "_errors": ["String the user responded with"]
-    }
-    ```
+    .. code-block:: json
 
-    Likewise, a 200 response will look like:
+        {
+            "_errors": ["String the user responded with"]
+        }
 
-    ```
-    {
-        "message": "String the user returned with."
-    }
-    ```
+    Likewise, a string return value with a 200 response will look like:
+
+
+    .. code-block:: json
+
+        {
+            "message": "String the user returned with."
+        }
+
     
     If a Non-200 response occured, and flask-restful added it's own error 
     message in the "message" field of the response data, this data is moved into
     "_errors":
 
-    ```
-    {
-        "_errors": ["You don't have the permission to access the requested resource..."]
-    }
-    ```
+
+    .. code-block:: json
+
+        {
+            "_errors": ["You don't have the permission to access the requested resource..."]
+        }
+
 
     All data is returned using flask's jsonify method. This means you can 
     use simplejson to return decimal objects from your flask restful resources.
@@ -80,12 +85,28 @@ class ExpectedJSONException(Exception):
 
     @classmethod
     def handle(cls, exc):
+        """
+        A handler for this type of exception.
+
+        Usage:
+
+        .. code-block:: python
+     
+            app.errorhandler(ExpectedJSONException)(ExpectedJSONException.handle)
+
+
+        """
         return jsonify(
             format_error('Resource expected a JSON payload to be provided.')
         ), 400
 
 
 def get_and_expect_json():
+    """
+    Returns the ``flask.request.get_json()`, however if no JSON data was decoded,
+    will raise a :class:`ExpectedJSONException`
+    """
+
     data = request.get_json()
     if data is None:
         raise ExpectedJSONException()
