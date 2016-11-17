@@ -5,6 +5,25 @@ import re
 bearer_re = re.compile(r'Bearer (.+)')
 
 def parse_auth_header(token_cls, auth_header=True, query_string=True, secret=None):
+    """
+    A decorator to extract a token from either the ``Authorization`` header OR
+    the query string parameter ``?token=``.
+
+    :param token_cls: An instance of :class:`ShortlivedTokenMixin` OR a class which
+                      implements the classmethod ``load(token_string, secret)``. 
+                      An instance will be available on `g.token`.
+    :param auth_header:  (optional, ``bool``) Extract the token from the auth 
+                          header (Default: ``True``)
+    :param query_string: (optional, ``bool``) Extract the token from the query 
+                          string (Default: ``True``)
+    :param secret: (optional) A secret to pass to ``token_cls.load(raw, secret)``
+
+    Any wrapped function will be able to access both ``g.token`` and ``g.raw_token``
+    to read the ``token_cls`` instance and raw token string respectively.
+
+    Authorization header expects tokens in the format of ``Bearer <token string>``
+
+    """
     def wrapper(f):
         @wraps(f)
         def wrapped(*args, **kwargs):
@@ -36,6 +55,20 @@ def parse_auth_header(token_cls, auth_header=True, query_string=True, secret=Non
 
 
 def auth_required():
+    """
+    Force authentication on an endpoint. Checks if ``g.token`` is not None, 
+    and returns a ``401`` if it is.
+
+    Example:
+
+    .. code::
+
+        @app.route('/auth-required')
+        @auth_required()
+        def my_endpoint():
+            return "Hello World"
+
+    """
     def wrapper(f):
         @wraps(f)
         def wrapped(*args, **kwargs):

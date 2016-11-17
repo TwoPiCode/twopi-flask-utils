@@ -1,0 +1,12 @@
+sphinx
+sphinxcontrib-napoleon
+
+
+# Extras For autodoc
+marshmallow
+webargs 
+flask 
+celery 
+flask-restful 
+jwt
+raven

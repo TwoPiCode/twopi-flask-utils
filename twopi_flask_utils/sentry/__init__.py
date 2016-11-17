@@ -5,10 +5,11 @@ from raven.contrib.flask import Sentry
 
 def create_client(conf, app_version='__UNKNOWN__'):
     """Creates a sentry client.
-    @param app_version (string): App version sent to sentry for making events 
-                                 more rich
-    @param conf['SENTRY_DSN'] (string, required): DSN of sentry server
-    @param conf['SENTRY_SITE'] (string): The site description of the deployment.
+
+    :param app_version: (string): App version sent to sentry for making events more rich
+    :param conf['SENTRY_DSN']: (string, required): DSN of sentry server
+    :param conf['SENTRY_SITE']: (string): The site description of the deployment.
+    :returns: An initialized ``raven.Client`` instance.
     """
     client = Client(
         conf['SENTRY_DSN'],
@@ -20,10 +21,10 @@ def create_client(conf, app_version='__UNKNOWN__'):
 def inject_sentry(app):
     """Injects sentry into a Flask Application
     
-    Will only inject if SENTRY_DSN is specified.
-    SENTRY_SITE and app.version is used to provide extra context to sentry events.
+    Will only inject if ``SENTRY_DSN`` is specified. ``SENTRY_SITE`` and 
+    ``app.version`` are used to provide extra context to sentry events.
 
-    @param app (Flask): A flask application to attach sentry to.
+    :param app: (Flask Instance): A flask application to attach raven to.
     """
 
     if app.config.get('SENTRY_DSN'):
@@ -32,11 +33,14 @@ def inject_sentry(app):
 
 
 def celery_inject_sentry(celery):
-    """Inject Sentry into a celery app. Requires raven.
+    """Inject Sentry into a celery app. Requires ``raven``.
     
-    If SENTRY_DSN is specified in config, a sentry client is created and 
-    attached. Additionally uses celery.version and SENTRY_SITE to provide extra
-    context to sentry events.
+    If ``SENTRY_DSN`` is specified in config, a sentry client is created and 
+    attached. Additionally uses ``celery.version`` and ``SENTRY_SITE`` to 
+    provide extra context to sentry events.
+    
+    :param celery: The celery instance to attach raven to.
+
     """
     if celery.conf.get('SENTRY_DSN'):
         client = create_client(celery.conf, 
