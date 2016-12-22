@@ -11,7 +11,7 @@ class BetterFlaskParser(FlaskParser):
     def handle_error(self, error):
         """
         Don't raise a ``HTTPException`` via ``abort``. Instead we will throw the 
-        ``ValidationError`` and handle it with our flask Exception handler.
+        ``webargs.core.ValidationError`` and handle it with our flask Exception handler.
 
         This allows a common code path for both Flask-Restful AND standard 
         Flask Views.

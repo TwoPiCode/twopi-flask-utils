@@ -1,11 +1,11 @@
-from flask import g, request, jsonify
+from flask import g, request, abort
 from functools import wraps
-from twopi_flask_utils.restful import format_error
 import re
 
 bearer_re = re.compile(r'Bearer (.+)')
 
-def parse_auth_header(token_cls, auth_header=True, query_string=True, secret=None):
+def parse_auth_header(token_cls, auth_header=True, query_string=True, secret=None, 
+                      format_and_jsonify=True):
     """
     A decorator to extract a token from either the ``Authorization`` header OR
     the query string parameter ``?token=``.
@@ -18,6 +18,8 @@ def parse_auth_header(token_cls, auth_header=True, query_string=True, secret=Non
     :param query_string: (optional, ``bool``) Extract the token from the query 
                           string (Default: ``True``)
     :param secret: (optional) A secret to pass to ``token_cls.load(raw, secret)``
+    :param format_and_jsonify: (optional) Marshall the response with 
+                            format_error into JSON (Default: ``True``)
 
     Any wrapped function will be able to access both ``g.token`` and ``g.raw_token``
     to read the ``token_cls`` instance and raw token string respectively.
@@ -44,7 +46,7 @@ def parse_auth_header(token_cls, auth_header=True, query_string=True, secret=Non
             if raw_token is not None:
                 token = token_cls.load(raw_token, secret)
                 if token is None:
-                    return jsonify(format_error("The provided token was invalid.")), 401
+                    return abort(401, 'The provided token was invalid.')
 
                 g.token = token
                 g.raw_token = raw_token
@@ -55,7 +57,7 @@ def parse_auth_header(token_cls, auth_header=True, query_string=True, secret=Non
     return wrapper
 
 
-def auth_required():
+def auth_required(format_and_jsonify=True):
     """
     Force authentication on an endpoint. Checks if ``g.token`` is not None, 
     and returns a ``401`` if it is.
@@ -74,8 +76,7 @@ def auth_required():
         @wraps(f)
         def wrapped(*args, **kwargs):
             if g.token is None:
-                return jsonify(
-                    format_error("A valid token is required to access this resource")), 401
+                return abort(401, "A valid token is required to access this resource")
 
             return f(*args, **kwargs)
         
