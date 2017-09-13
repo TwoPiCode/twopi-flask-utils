@@ -1,4 +1,4 @@
-from raven import Client 
+from raven import Client
 from raven.contrib.celery import register_signal, register_logger_signal
 from raven.contrib.flask import Sentry
 
@@ -32,33 +32,39 @@ def create_client(conf, app_version='__UNKNOWN__', ignore_common_http=True):
 
 def inject_sentry(app, ignore_common_http=True):
     """Injects sentry into a Flask Application
-    
-    Will only inject if ``SENTRY_DSN`` is specified. ``SENTRY_SITE`` and 
+
+    Will only inject if ``SENTRY_DSN`` is specified. ``SENTRY_SITE`` and
     ``app.version`` are used to provide extra context to sentry events.
 
     :param app: (Flask Instance): A flask application to attach raven to.
     """
 
     if app.config.get('SENTRY_DSN'):
-        client = create_client(app.config, app.version, 
+        client = create_client(app.config, app.version,
                                ignore_common_http=ignore_common_http)
         Sentry(app, client=client)
+        return client
+
+    return None
 
 
 def celery_inject_sentry(celery):
     """Inject Sentry into a celery app. Requires ``raven``.
-    
-    If ``SENTRY_DSN`` is specified in config, a sentry client is created and 
-    attached. Additionally uses ``celery.version`` and ``SENTRY_SITE`` to 
+
+    If ``SENTRY_DSN`` is specified in config, a sentry client is created and
+    attached. Additionally uses ``celery.version`` and ``SENTRY_SITE`` to
     provide extra context to sentry events.
-    
+
     :param celery: The celery instance to attach raven to.
 
     """
     if celery.conf.get('SENTRY_DSN'):
-        client = create_client(celery.conf, 
+        client = create_client(celery.conf,
                                app_version=getattr(celery, 'version', 'UNKNOWN'),
                                ignore_common_http=False)
 
         register_logger_signal(client)
         register_signal(client)
+        return client
+
+    return None
