@@ -67,7 +67,7 @@ def login():
             abort(401)
 
     # Create a new refresh token
-    refresh_token = RefreshToken(user_id=request.form.get('username'), 
+    refresh_token = RefreshToken(user_id=request.form.get('username'),
                                  scopes=['360noscope'])
 
     # Persist the refresh token so we can renew it later
@@ -112,7 +112,7 @@ def renew():
     for refresh_token in refresh_tokens:
         if refresh_token.token == token_string:
             break # Found the token that we need.
-    
+
     else: # nobreak
         # Couldn't find the token. Oops
         abort(401)
@@ -120,7 +120,7 @@ def renew():
     # Make a new shortlived token
     shortlived_token = ShortlivedToken.from_refresh_token(refresh_token)
     log.info("Generated token with payload: {}".format(shortlived_token))
-    
+
     # Respond to the client with the new token
     return jsonify({
         'token': shortlived_token.dump()

@@ -1,5 +1,5 @@
 import unittest, os
-from twopi_flask_utils.deployment_release import get_release 
+from twopi_flask_utils.deployment_release import get_release
 
 class TestGetRelease(unittest.TestCase):
 
@@ -11,7 +11,7 @@ class TestGetRelease(unittest.TestCase):
         f = open('version.txt', 'w')
         f.write('fakeversion')
         f.close()
-        
+
         self.assertEqual(get_release(), 'fakeversion')
 
     def test_no_release_file(self):

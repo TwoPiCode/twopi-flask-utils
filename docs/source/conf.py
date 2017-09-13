@@ -54,7 +54,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'twopi-flask-utils'
-copyright = '2016, TwoPi Code'
+copyright = '2017, TwoPi Code'
 author = 'TwoPi Code'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -182,8 +182,8 @@ html_static_path = ['_static']
 #
 # html_sidebars = {}
 html_sidebars = {
-    'index':    ['sidebarlogo.html', 'sidebarintro.html', 'globaltoc.html', 'searchbox.html'],
-    '**':       ['sidebarlogo.html', 'globaltoc.html', 'sourcelink.html', 'searchbox.html']
+    'index':    ['sidebarintro.html', 'globaltoc.html', 'searchbox.html'],
+    '**':       ['globaltoc.html', 'sourcelink.html', 'searchbox.html']
 }
 
 # Additional templates that should be rendered to pages, maps page names to

@@ -1,5 +1,5 @@
 import unittest
-from twopi_flask_utils.config import build_url 
+from twopi_flask_utils.config import build_url
 
 class TestBuildUrl(unittest.TestCase):
     def test_basic_dsn(self):

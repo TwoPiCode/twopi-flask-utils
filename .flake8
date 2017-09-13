@@ -4,5 +4,6 @@ exclude =
    .git,
    venv,
    docs,
+   .eggs,
 
 max-line-length = 100
