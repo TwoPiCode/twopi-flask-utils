@@ -47,7 +47,7 @@ long_description = open(readme_path).read()
 
 try:
     version = get_version()
-except Exception as e:
+except Exception:
     version = '0.0.0-dev'
 
 

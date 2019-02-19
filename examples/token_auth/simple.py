@@ -64,7 +64,7 @@ def login():
     # Check if the credentials were correct
     if request.form.get('username') != 'test' or \
             request.form.get('password') != 'test':
-            abort(401)
+        abort(401)
 
     # Create a new refresh token
     refresh_token = RefreshToken(user_id=request.form.get('username'),
