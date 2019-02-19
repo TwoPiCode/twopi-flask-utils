@@ -121,7 +121,7 @@ class ShortlivedTokenMixin(object):
             return None
         try:
             return Cls(**deserialized)
-        except TypeError as e:
+        except TypeError:
             log.info("Malformed token was provided, error during instantiation.")
             return None
 
