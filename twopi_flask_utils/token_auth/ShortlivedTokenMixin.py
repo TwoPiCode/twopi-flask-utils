@@ -85,9 +85,11 @@ class ShortlivedTokenMixin(object):
 
 
         """
-        raise NotImplemented("You must implement from_refresh_token. Invoke {}() "
-                             "and instantiate it using information from the "
-                             "refresh token".format(Cls.__name__))
+        raise NotImplementedError(
+            "You must implement from_refresh_token. Invoke {}() "
+            "and instantiate it using information from the "
+            "refresh token".format(Cls.__name__)
+        )
 
     @classmethod
     def load(Cls, token_string, secret=None, issuer=None, audience=None):
@@ -119,7 +121,7 @@ class ShortlivedTokenMixin(object):
             return None
         try:
             return Cls(**deserialized)
-        except TypeError as e:
+        except TypeError:
             log.info("Malformed token was provided, error during instantiation.")
             return None
 
