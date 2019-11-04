@@ -56,12 +56,12 @@ def output_json(data, code, headers=None):
     if type(data) is str:
         # Handle view returning a string.
         message = data
-        if code != 200:
+        if code >= 400:
             data = format_errors(message)
         else:
             data = {'message': message}
 
-    elif code != 200 and type(data) is dict and 'message' in data:
+    elif code >= 400 and type(data) is dict and 'message' in data:
         # Flask-Restful returns non-200 error messages to the user.
         # Let's show them.
         data = format_errors(data.get('message'))
