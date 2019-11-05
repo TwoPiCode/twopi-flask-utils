@@ -11,7 +11,6 @@ install:
   - pip install .
 
 script:
-  - bash get_pypipass.sh
   - flake8 .
   - coverage run --source=twopi_flask_utils setup.py test
 
