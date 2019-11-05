@@ -18,7 +18,7 @@ after_success:
   - coveralls
 
 before_deploy:
-  - git describe --dirty --always > VERSION
+  - git describe --tags --dirty --always --abbrev=0 > VERSION
 
 deploy:
   provider: pypi
