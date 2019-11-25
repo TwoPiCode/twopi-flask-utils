@@ -31,9 +31,9 @@ class ShortlivedTokenMixin(object):
     :param issuer: ``string``
     :param subject: ``string``
     :param audience: ``string``
-    :param not_before: ``datetime``: A datetime of when the token becomes 
+    :param not_before: ``datetime``: A datetime of when the token becomes
                                      valid for use
-    :param issued_at: ``datetime``: When the token was issued. This value is 
+    :param issued_at: ``datetime``: When the token was issued. This value is
                                     overwritten during ``dump()``
     """
     class TokenSchema(Schema):
@@ -51,10 +51,10 @@ class ShortlivedTokenMixin(object):
 
         @post_dump
         def remove_skippable(self, data):
-            return {key: value for key, value in data.items() 
+            return {key: value for key, value in data.items()
                     if key not in self.SKIPPABLE or value is not None}
 
-    def __init__(self, expiry=None, issuer=None, subject=None, audience=None, 
+    def __init__(self, expiry=None, issuer=None, subject=None, audience=None,
                  not_before=None, issued_at=None):
         self.expiry = expiry
         self.issuer = issuer
@@ -72,14 +72,14 @@ class ShortlivedTokenMixin(object):
     @classmethod
     def from_refresh_token(Cls, refresh_token):
         """
-        Given a refresh token, return an instance of ShortLivedTokenMixin 
+        Given a refresh token, return an instance of ShortLivedTokenMixin
         configured using information from ``refresh_token``.
 
         :param refresh_token: A refresh token instance.
         :returns: A new ShortLivedToken instance.
 
         .. warning::
-            
+
             You must implement this method
 
 
@@ -97,8 +97,8 @@ class ShortlivedTokenMixin(object):
         Load from a JWT (``token_string``)
 
         :param token_string: The raw string to load from
-        :param secret: The secret that the JWT was signed with to check validity. 
-                       If this is omitted, the secret will be sourced 
+        :param secret: The secret that the JWT was signed with to check validity.
+                       If this is omitted, the secret will be sourced
                        from ``current_app.config['SECRET_KEY']``
         :param issuer: The issuer the JWT decode should expect
         :param audience: The audience the JWT decode should expect
@@ -129,7 +129,7 @@ class ShortlivedTokenMixin(object):
         """
         Dump the token into a stringified JWT.
 
-        :param secret: The secret to sign the JWT with. If this is omitted, the 
+        :param secret: The secret to sign the JWT with. If this is omitted, the
                        secret will be sourced from ``current_app.config['SECRET_KEY']``
 
         :returns: The stringified JWT.

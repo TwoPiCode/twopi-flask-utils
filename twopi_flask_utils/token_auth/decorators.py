@@ -11,11 +11,11 @@ def parse_auth_header(token_cls, auth_header=True, query_string=True, secret=Non
     the query string parameter ``?token=``.
 
     :param token_cls: An instance of :class:`ShortlivedTokenMixin` OR a class which
-                      implements the classmethod ``load(token_string, secret)``. 
+                      implements the classmethod ``load(token_string, secret)``.
                       An instance will be available on `g.token`.
-    :param auth_header:  (optional, ``bool``) Extract the token from the auth 
+    :param auth_header:  (optional, ``bool``) Extract the token from the auth
                           header (Default: ``True``)
-    :param query_string: (optional, ``bool``) Extract the token from the query 
+    :param query_string: (optional, ``bool``) Extract the token from the query
                           string (Default: ``True``)
     :param secret: (optional) A secret to pass to ``token_cls.load(raw, secret)``
 
@@ -57,7 +57,7 @@ def parse_auth_header(token_cls, auth_header=True, query_string=True, secret=Non
 
 def auth_required():
     """
-    Force authentication on an endpoint. Checks if ``g.token`` is not None, 
+    Force authentication on an endpoint. Checks if ``g.token`` is not None,
     and returns a ``401`` if it is.
 
     Example:
@@ -74,10 +74,11 @@ def auth_required():
         @wraps(f)
         def wrapped(*args, **kwargs):
             if g.token is None:
-                return jsonify(
-                    format_error("A valid token is required to access this resource")), 401
+                r = jsonify("A valid token is required to access this resource")
+                r.status_code = 401
+                return r
 
             return f(*args, **kwargs)
-        
+
         return wrapped
     return wrapper
